@@ -5,7 +5,11 @@ defmodule HelloLeds.LedServer do
   alias ElixirALE.GPIO
   use GenServer
 
-  def write(led, level), do: GenServer.call(__MODULE__, {:write, led, level})
+  def write(led, level), do: GenServer.cast(__MODULE__, {:write, led, level})
+
+  def dance do
+    GenServer.cast(__MODULE__, :dance)
+  end
 
   def start_link([]) do
     GenServer.start_link(__MODULE__, [], [name: __MODULE__])
@@ -28,9 +32,23 @@ defmodule HelloLeds.LedServer do
     {:ok, %{buttons: buttons, leds: leds}}
   end
 
-  def handle_call({:write, led, level}, _, state) do
+  def handle_cast({:write, led, level}, state) do
     GPIO.write(state.leds[led], level)
     {:reply, :ok, state}
+  end
+
+  def handle_cast(:dance, state) do
+    for {_led, pid} <- state.leds do
+      GPIO.write(pid, 1)
+      Process.sleep(100)
+    end
+
+    Process.sleep(500)
+
+    for {_led, pid} <- state.leds do
+      GPIO.write(pid, 0)
+      Process.sleep(100)
+    end
   end
 
   def handle_info({:gpio_interrupt, pin, level}, state) do

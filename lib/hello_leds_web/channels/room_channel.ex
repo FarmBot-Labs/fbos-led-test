@@ -1,13 +1,8 @@
 defmodule HelloLedsWeb.RoomChannel do
   use Phoenix.Channel
 
-  def join("rooms:lobby", message, socket) do
-    IO.puts "HEY!"
-    # Process.flag(:trap_exit, true)
-    # :timer.send_interval(5000, :ping)
-    # send(self, {:after_join, message})
+  def join("rooms:lobby", _message, socket) do
     Elixir.Registry.register(HelloLeds.Registry, :gpio_interrupt, [])
-
     {:ok, socket}
   end
 
@@ -21,6 +16,11 @@ defmodule HelloLedsWeb.RoomChannel do
   def handle_in("led_toggle", %{"pin" => pin, "level" => level}, socket) when is_integer(pin) and is_integer(level) do
     IO.puts "writing: #{pin} => #{level}"
     HelloLeds.LedServer.write(pin, level)
+    {:noreply, socket}
+  end
+
+  def handle_in("dance", _, socket) do
+    HelloLeds.LedServer.dance()
     {:noreply, socket}
   end
 end

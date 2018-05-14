@@ -26,3 +26,7 @@ function toggle(pin) {
   chan.push("led_toggle", {pin: pin, level: num});
   console.log(pin + " toggled + " + num);
 }
+
+function dance() {
+  chan.push("dance", {});
+}

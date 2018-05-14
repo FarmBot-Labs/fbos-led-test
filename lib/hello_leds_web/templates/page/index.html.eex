@@ -18,4 +18,6 @@
     </label>
     <br>
   <% end %>
+
+  <button onclick="dance()"> DANCE </button>
 </table>
