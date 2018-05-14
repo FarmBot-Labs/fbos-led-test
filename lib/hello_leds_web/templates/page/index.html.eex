@@ -1,0 +1,21 @@
+<table style="width:100%">
+  <tr>
+    <th>Pin</th>
+    <th>State</th>
+  </tr>
+  <%= for pin <- [5, 16, 20, 22, 26] do %>
+  <tr>
+    <td><%= pin %> </td>
+    <td id="pin_state.<%= pin %>">Unknown</td>
+  </tr>
+  <% end %>
+
+  <%= for led <- [17, 23, 27, 06, 21, 24, 25, 12, 13] do %>
+    <%= led %>
+    <label class="switch">
+      <input type="checkbox" id="led_state.<%= led %>" onclick="toggle(<%= led %>)">
+      <span class="slider"></span>
+    </label>
+    <br>
+  <% end %>
+</table>
