@@ -34,26 +34,38 @@ defmodule HelloLeds.LedServer do
 
   def handle_cast({:write, led, level}, state) do
     GPIO.write(state.leds[led], level)
+    dispatch(led, level)
     {:reply, :ok, state}
   end
 
   def handle_cast(:dance, state) do
-    for {_led, pid} <- state.leds do
+    for {led, pid} <- state.leds do
       GPIO.write(pid, 1)
+      dispatch(led, 1)
       Process.sleep(100)
     end
 
     Process.sleep(500)
 
-    for {_led, pid} <- state.leds do
+    for {led, pid} <- state.leds do
       GPIO.write(pid, 0)
+      dispatch(led, 0)
       Process.sleep(100)
     end
   end
 
-  def handle_info({:gpio_interrupt, pin, level}, state) do
+  def handle_info({:gpio_interrupt, pin, :rising}, state) do
+    dispatch(pin, 1)
+    {:noreply, state}
+  end
+
+  def handle_info({:gpio_interrupt, pin, :falling}, state) do
+    dispatch(pin, 0)
+    {:noreply, state}
+  end
+
+  defp dispatch(pin, level) do
     Registry.dispatch(@registry, :gpio_interrupt, fn entries ->
     for {pid, _} <- entries, do: send( pid, {pin, level}) end)
-    {:noreply, state}
   end
 end

@@ -16,8 +16,16 @@ chan.onClose(e => console.log("channel closed", e))
 chan.on("gpio_interupt:change", msg => {
   console.log("gpio: " + msg.pin + " level: " + msg.level);
   var elem = document.getElementById("pin_state." + msg.pin);
+  if(elem) {
+    elem.innerHTML = msg.level;
+  }
 
-  elem.innerHTML = msg.level;
+  var elem = document.getElementById("led_state." + msg.pin);
+  if (elem) {
+    var level;
+    if(msg.level == 1) {level = true} else {level = false}
+    elem.checked = level
+  }
 })
 
 function toggle(pin) {
