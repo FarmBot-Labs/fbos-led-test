@@ -35,7 +35,7 @@ defmodule HelloLeds.LedServer do
   def handle_cast({:write, led, level}, state) do
     GPIO.write(state.leds[led], level)
     dispatch(led, level)
-    {:reply, :ok, state}
+    {:noreply, state}
   end
 
   def handle_cast(:dance, state) do
@@ -52,6 +52,8 @@ defmodule HelloLeds.LedServer do
       dispatch(led, 0)
       Process.sleep(100)
     end
+
+    {:noreply, state}
   end
 
   def handle_info({:gpio_interrupt, pin, :rising}, state) do
