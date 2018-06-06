@@ -5,9 +5,11 @@ defmodule HelloLeds.Application do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
+    RingLogger.attach()
 
     # Define workers and child supervisors to be supervised
     children = [
+      {HelloLeds.LedTest, []},
       # Start the endpoint when the application starts
       supervisor(HelloLedsWeb.Endpoint, []),
       {Registry, keys: :duplicate, name: HelloLeds.Registry},
