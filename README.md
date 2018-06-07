@@ -1,4 +1,5 @@
 # HelloLeds
+![Whoops!](priv/static/images/leds.gif)
 
 **TODO: Add description**
 

@@ -2,12 +2,20 @@ defmodule HelloLeds.LedTest do
   @buttons [5, 16, 20, 22, 26]
   @leds [24, 25, 12, 13, 17, 23, 27, 06, 21, ]
 
-  @map %{
+  @map_a %{
     16 => 17,
     22 => 23,
     26 => 27,
     5  =>  6,
     20 => 21,
+  }
+
+  @map_b %{
+    16 => 24,
+    22 => 25,
+    26 => 12,
+    5  => 13,
+    20 => nil,
   }
 
   alias ElixirALE.GPIO
@@ -37,7 +45,7 @@ defmodule HelloLeds.LedTest do
 
     wait_for_button_input(input, output)
     flush_messages()
-    
+
     for pin_num <- @leds do
       GPIO.write(output[pin_num].pid, 0)
       GPIO.release(output[pin_num].pid)
@@ -79,6 +87,11 @@ defmodule HelloLeds.LedTest do
     27 => 1,
     6  => 1,
     21 => 1,
+
+    24 => 1,
+    25 => 1,
+    12 => 1,
+    13 => 1,
   })
 
   def wait_for_button_input(_input, _output, %{
@@ -98,12 +111,20 @@ defmodule HelloLeds.LedTest do
         state
       else
         if button_state == 1 do
-          led_pin = @map[button_pin]
-          led_state = invert(state[led_pin])
-          GPIO.write(output[led_pin].pid, led_state)
-          Logger.info "LED TEST [ button ] => #{button_state}"
-          Logger.info "LED TEST [  led   ] => #{led_state}"
-          %{state | button_pin => button_state, led_pin => led_state}
+          led_a_pin = @map_a[button_pin]
+          led_b_pin = @map_b[button_pin]
+
+          led_a_state = invert(state[led_a_pin])
+          GPIO.write(output[led_a_pin].pid, led_a_state)
+
+          if led_b_pin do
+            led_b_state = invert(state[led_b_pin])
+            GPIO.write(output[led_b_pin].pid, led_b_state)
+            %{state | button_pin => button_state, led_a_pin => led_a_state, led_b_pin => led_b_state}
+          else
+            %{state | button_pin => button_state, led_a_pin => led_a_state}
+          end
+
         else
           %{state | button_pin => button_state}
         end
