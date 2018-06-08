@@ -17,13 +17,12 @@ config :shoehorn,
   init: [:nerves_runtime, :nerves_init_gadget],
   app: Mix.Project.config()[:app]
 
-if Mix.Project.config[:target] == "host" do
+if Mix.Project.config()[:target] == "host" do
   config app, HelloLedsWeb.Endpoint,
     url: [host: "localhost"],
     secret_key_base: "UvGrOM15+EqhIlvMpVDIAdcm4oXSb4h5UG9+VvekNaqKhSQakKueTrWIDqGoNH+Y",
     render_errors: [view: HelloLedsWeb.ErrorView, accepts: ~w(html json)],
-    pubsub: [name: HelloLeds.PubSub,
-             adapter: Phoenix.PubSub.PG2]
+    pubsub: [name: HelloLeds.PubSub, adapter: Phoenix.PubSub.PG2]
 
   # Configures Elixir's Logger
   config :logger, :console,
@@ -39,14 +38,14 @@ if Mix.Project.config[:target] == "host" do
 
   # Watch static and templates for browser reloading.
   config app, HelloLeds.Endpoint,
-  live_reload: [
-    patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
-      ~r{priv/gettext/.*(po)$},
-      ~r{libapp_web/views/.*(ex)$},
-      ~r{libapp_web/templates/.*(eex)$}
+    live_reload: [
+      patterns: [
+        ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+        ~r{priv/gettext/.*(po)$},
+        ~r{libapp_web/views/.*(ex)$},
+        ~r{libapp_web/templates/.*(eex)$}
+      ]
     ]
-  ]
 
   # Do not include metadata nor timestamps in development logs
   config :logger, :console, format: "[$level] $message\n"
@@ -55,8 +54,7 @@ if Mix.Project.config[:target] == "host" do
   # in production as building large stacktraces may be expensive.
   config :phoenix, :stacktrace_depth, 20
 else
-  config :logger,
-    backends: [RingLogger]
+  config :logger, backends: [RingLogger]
 
   config app, HelloLedsWeb.Endpoint,
     http: [port: 80],
@@ -77,7 +75,7 @@ config :logger, :console,
 
 config :nerves_firmware_ssh,
   authorized_keys: [
-    File.read!(Path.join(System.user_home!, ".ssh/id_rsa.pub"))
+    File.read!(Path.join(System.user_home!(), ".ssh/id_rsa.pub"))
   ]
 
 # config :logger, backends: [RingLogger]
@@ -85,12 +83,12 @@ config :nerves_firmware_ssh,
 config :nerves_init_gadget,
   ifname: "eth0",
   address_method: :dhcp
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
-
 
 # import_config "#{Mix.Project.config[:target]}.exs"

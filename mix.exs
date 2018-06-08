@@ -9,7 +9,7 @@ defmodule HelloLeds.MixProject do
       version: "0.1.0",
       elixir: "~> 1.4",
       target: @target,
-      compilers: [:phoenix, :gettext] ++ Mix.compilers,
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       archives: [nerves_bootstrap: "~> 1.0"],
       deps_path: "deps/#{@target}",
       build_path: "_build/#{@target}",
@@ -55,8 +55,8 @@ defmodule HelloLeds.MixProject do
   defp deps(target) do
     [
       {:nerves_runtime, "~> 0.4"},
-       {:nerves_init_gadget, "~> 0.3"},
-       {:elixir_ale, "~> 1.0"}
+      {:nerves_init_gadget, "~> 0.3"},
+      {:elixir_ale, "~> 1.0"}
     ] ++ system(target)
   end
 

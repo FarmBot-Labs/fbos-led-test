@@ -12,22 +12,23 @@ defmodule HelloLeds.LedServer do
   end
 
   def start_link([]) do
-    GenServer.start_link(__MODULE__, [], [name: __MODULE__])
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init([]) do
+    buttons =
+      Map.new(@buttons, fn num ->
+        {:ok, pid} = GPIO.start_link(num, :input)
+        GPIO.set_int(pid, :both)
+        {num, pid}
+      end)
 
-    buttons = Map.new(@buttons, fn(num) ->
-      {:ok, pid} = GPIO.start_link(num, :input)
-      GPIO.set_int(pid, :both)
-      {num, pid}
-    end)
-
-    leds = Map.new(@leds, fn(num) ->
-      {:ok, pid} = GPIO.start_link(num, :output)
-      :ok = GPIO.write(pid, 0)
-      {num, pid}
-    end)
+    leds =
+      Map.new(@leds, fn num ->
+        {:ok, pid} = GPIO.start_link(num, :output)
+        :ok = GPIO.write(pid, 0)
+        {num, pid}
+      end)
 
     {:ok, %{buttons: buttons, leds: leds}}
   end
@@ -68,6 +69,7 @@ defmodule HelloLeds.LedServer do
 
   defp dispatch(pin, level) do
     Registry.dispatch(@registry, :gpio_interrupt, fn entries ->
-    for {pid, _} <- entries, do: send( pid, {pin, level}) end)
+      for {pid, _} <- entries, do: send(pid, {pin, level})
+    end)
   end
 end
