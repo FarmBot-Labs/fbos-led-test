@@ -23,8 +23,8 @@ defmodule HelloLeds.LedTest do
   use GenServer
 
   def start_link([]) do
-    RingLogger.attach()
-    RingLogger.tail()
+    # RingLogger.attach()
+    # RingLogger.tail()
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
@@ -39,19 +39,19 @@ defmodule HelloLeds.LedTest do
     # setup output and turn all leds on.
     output =
       Map.new(@leds, fn pin_num ->
-        Logger.info("LED TEST [  led   ] #{pin_num} => 1")
+        Logger.info("LED TEST [  led   ] #{pin_num} => 0")
         {:ok, pin_pid} = GPIO.start_link(pin_num, :output)
-        Process.sleep(300)
-        GPIO.write(pin_pid, 1)
+        # Process.sleep(300)
+        GPIO.write(pin_pid, 0)
         {pin_num, %{pid: pin_pid}}
       end)
 
-    Process.sleep(500)
+    # Process.sleep(500)
 
     # Turn all leds off.
-    for pin_num <- @leds do
-      GPIO.write(output[pin_num].pid, 0)
-    end
+    # for pin_num <- @leds do
+    #   GPIO.write(output[pin_num].pid, 0)
+    # end
 
     GPIO.write(output[17].pid, 1)
     GPIO.write(output[24].pid, 1)
