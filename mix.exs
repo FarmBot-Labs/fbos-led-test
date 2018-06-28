@@ -6,7 +6,7 @@ defmodule HelloLeds.MixProject do
   def project do
     [
       app: :hello_leds,
-      version: "0.2.0",
+      version: "0.3.0",
       elixir: "~> 1.4",
       target: @target,
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),

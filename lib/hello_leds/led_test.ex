@@ -74,9 +74,9 @@ defmodule HelloLeds.LedTest do
     # button to be pushed
     flush_messages()
 
-    receive do
-      _ -> :ok
-    end
+    # receive do
+    #   _ -> :ok
+    # end
 
     # After one button was pushed, release and restart test.
     for pin_num <- @buttons do
