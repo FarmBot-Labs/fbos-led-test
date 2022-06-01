@@ -1,9 +1,9 @@
 # This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
+# and its dependencies with the aid of the Config module.
 #
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
-use Mix.Config
+import Config
 app = Mix.Project.config()[:app]
 
 # Customize non-Elixir parts of the firmware.  See
@@ -16,9 +16,9 @@ config :nerves, :firmware, rootfs_overlay: "rootfs_overlay"
 config :shoehorn,
 # init: [:nerves_runtime, :nerves_init_gadget],
   init: [:nerves_runtime],
-  app: Mix.Project.config()[:app]
+  app: app
 
-if Mix.Project.config()[:target] == "host" do
+if Mix.target() == :host do
   config app, HelloLedsWeb.Endpoint,
     url: [host: "localhost"],
     secret_key_base: "UvGrOM15+EqhIlvMpVDIAdcm4oXSb4h5UG9+VvekNaqKhSQakKueTrWIDqGoNH+Y",
@@ -79,6 +79,8 @@ config :nerves_firmware_ssh,
     File.read!(Path.join(System.user_home!(), ".ssh/id_rsa.pub"))
   ]
 
+config :phoenix, :json_library, Poison
+
 # config :logger, backends: [RingLogger]
 
 config :nerves_init_gadget,
@@ -87,7 +89,7 @@ config :nerves_init_gadget,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations

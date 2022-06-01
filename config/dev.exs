@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # config :hello_leds, HelloLedsWeb.Endpoint,
 #   http: [port: 4000],
